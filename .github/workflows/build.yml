@@ -6,7 +6,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Распаковка архива
+        run: |      - name: Patch Loom and Fabric API versions
         run: |
+          sed -i 's/id "fabric-loom" version ".*"/id "fabric-loom" version "1.14.17"/' settings.gradle
+          sed -i 's/modImplementation "net.fabricmc.fabric-api:fabric-api.*"/modImplementation "net.fabricmc.fabric-api:fabric-api:1.21.11+build.1"/' build.gradle
+          
           unzip -o dupe-mod-ready*.zip -d extracted
           ROOT=$(dirname "$(find extracted -name build.gradle | head -1)")
           echo "ROOT=$ROOT" >> $GITHUB_ENV
