@@ -6,7 +6,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Распаковка архива
-        run: unzip -o dupe-mod-ready*.zip -d project
+        run: |
+          unzip -o dupe-mod-ready*.zip -d extracted
+          ROOT=$(dirname "$(find extracted -name build.gradle | head -1)")
+          echo "ROOT=$ROOT" >> $GITHUB_ENV
+          echo "Найдена папка проекта: $ROOT"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -15,10 +19,10 @@ jobs:
         with:
           gradle-version: '8.12'
       - name: Сборка
-        run: gradle build
-        working-directory: project
+        run: gradle build --stacktrace
+        working-directory: ${{ env.ROOT }}
       - uses: actions/upload-artifact@v4
         with:
           name: dupe-mod-jar
-          path: project/build/libs/*.jar
+          path: ${{ env.ROOT }}/build/libs/*.jar
           
